@@ -1,8 +1,0 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-이거를 html title 아래에 넣고,
-scripts 파일을 따로 만든 뒤에 이 안에 
-function openclose() {
-    alert('Hello');
-}
-이 함수를 썼는데, 작동이 안하는 이유는 뭐야?
