@@ -57,58 +57,58 @@ window.addEventListener("DOMContentLoaded", async () => {
             console.error("저장 실패:", e);
         }
     });
-
+});
 
 // 게시물 렌더링 및 카운트
-    const posting_value = document.getElementById("posting_val");
-    const querySnapshot = await getDocs(collection(db, "miniprojects"));
-    let postCount = 0;
+//     const posting_value = document.getElementById("posting_val");
+//     const querySnapshot = await getDocs(collection(db, "miniprojects"));
+//     let postCount = 0;
 
-    querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const { image, title, comment } = data;
+//     querySnapshot.forEach((docSnap) => {
+//         const data = docSnap.data();
+//         const { image, title, comment } = data;
 
-        //undefined 걸러내!!!!!
-        if (!image || !title || !comment) return;
+//         //undefined 걸러내!!!!!
+//         if (!image || !title || !comment) return;
 
-        postCount++;
+//         postCount++;
 
-        let temp_html = `
-            <div class="col">
-                <div class="card h-100">
-                    <img src="${image}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">${title}</h5>
-                        <p class="card-text">${comment}</p>
-                    </div>
-                </div>
-            </div>`;
-        $('#card').append(temp_html);
-    });
+//         let temp_html = `
+//             <div class="col">
+//                 <div class="card h-100">
+//                     <img src="${image}" class="card-img-top" alt="...">
+//                     <div class="card-body">
+//                         <h5 class="card-title">${title}</h5>
+//                         <p class="card-text">${comment}</p>
+//                     </div>
+//                 </div>
+//             </div>`;
+//         $('#card').append(temp_html);
+//     });
 
-    posting_value.textContent = postCount;
-});
+//     posting_value.textContent = postCount;
+// });
 
 
-// 게시물 등록
-$("#postingbtn").click(async function () {
-    let image = $('#image').val();
-    let title = $('#title').val();
-    let comment = $('#comment').val();
-    //필드 입력칸 유효성 검사
-    if (!image || !title || !comment) {
-        alert("모든 필드를 입력해주세요.");
-        return;
-    }
+// // 게시물 등록
+// $("#postingbtn").click(async function () {
+//     let image = $('#image').val();
+//     let title = $('#title').val();
+//     let comment = $('#comment').val();
+//     //필드 입력칸 유효성 검사
+//     if (!image || !title || !comment) {
+//         alert("모든 필드를 입력해주세요.");
+//         return;
+//     }
 
-    let postData = { image, title, comment };
-    await addDoc(collection(db, "miniprojects"), postData);
+//     let postData = { image, title, comment };
+//     await addDoc(collection(db, "miniprojects"), postData);
 
-    alert('저장 완료!');
-    window.location.reload(); // 등록 후 새로고침하면 게시물 수와 카드 자동 반영
-});
+//     alert('저장 완료!');
+//     window.location.reload(); // 등록 후 새로고침하면 게시물 수와 카드 자동 반영
+// });
 
-// 업로드 폼 토글
-$("#savebtn").click(() => {
-    $('#postingbox').toggle();
-});
+// // 업로드 폼 토글
+// $("#savebtn").click(() => {
+//     $('#postingbox').toggle();
+// });
