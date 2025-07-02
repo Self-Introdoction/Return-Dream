@@ -31,40 +31,29 @@ function getKeyFromHTML() {
 // 초기 설정
 const targetId = getKeyFromHTML();
 
-// 좋아요 수 불러오기
-export async function fetchCount(targetKey) {
+// 좋아요 수 가져오기
+export async function fetchCount(targetKey = "LIKECOUNT") {
     const likeDocRef = doc(db, "LIKE", targetKey);
     const docSnap = await getDoc(likeDocRef);
 
-    // 문서 없을때 값 생성
     if (!docSnap.exists()) {
         await setDoc(likeDocRef, { count: 0 });
-        $("#count").text(0);
-        $("#heart").text("♡");
+        document.getElementById("count").textContent = 0;
+        document.getElementById("heart").textContent = "♡";
         return;
     }
 
-    // 숫자와 하트 변경
     const count = docSnap.data().count ?? 0;
-    $("#count").text(count);
-    $("#heart").text(count >= 1 ? "❤" : "♡");
+    document.getElementById("count").textContent = count;
+    document.getElementById("heart").textContent = count >= 1 ? "❤" : "♡";
 }
 
-// 버튼 클릭시 좋아요 증가
-export async function updateLike(targetKey) {
+// 좋아요 + 1
+export async function updateLike(targetKey = "LIKECOUNT") {
     const likeDocRef = doc(db, "LIKE", targetKey);
     await updateDoc(likeDocRef, {
         count: increment(1)
     });
+
     fetchCount(targetKey);
 }
-
-// 데이터 가져오기 및 이벤트
-$(document).ready(function () {
-    fetchCount(targetId);
-
-    // 좋아요 버튼 이벤트
-    $("#LIKEBTN").on("click", function () {
-        updateLike(targetId);
-    });
-});
