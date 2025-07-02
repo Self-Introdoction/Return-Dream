@@ -20,36 +20,38 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+
+// JQuery 버전
 // 파라미터 가져오기
-function getQueryParam(key) {
-    const params = new URLSearchParams(window.location.search);
-    return params.get(key);
+function getKeyFromHTML() {
+    const likeSection = document.getElementById("like");
+    return likeSection?.dataset.key || "LIKECOUNT";
 }
 
 // 초기 설정
-const targetId = getQueryParam('key') || "LIKECOUNT";
+const targetId = getKeyFromHTML();
 
 // 좋아요 수 불러오기
-async function fetchCount(targetKey) {
+export async function fetchCount(targetKey) {
     const likeDocRef = doc(db, "LIKE", targetKey);
     const docSnap = await getDoc(likeDocRef);
 
     // 문서 없을때 값 생성
     if (!docSnap.exists()) {
         await setDoc(likeDocRef, { count: 0 });
-        document.getElementById("count").textContent = 0;
-        document.getElementById("heart").textContent = "♡";
+        $("#count").text(0);
+        $("#heart").text("♡");
         return;
     }
 
     // 숫자와 하트 변경
     const count = docSnap.data().count ?? 0;
-    document.getElementById("count").textContent = count;
-    document.getElementById("heart").textContent = count >= 1 ? "♥" : "♡";
+    $("#count").text(count);
+    $("#heart").text(count >= 1 ? "❤" : "♡");
 }
 
 // 버튼 클릭시 좋아요 증가
-async function updateLike(targetKey) {
+export async function updateLike(targetKey) {
     const likeDocRef = doc(db, "LIKE", targetKey);
     await updateDoc(likeDocRef, {
         count: increment(1)
@@ -57,12 +59,12 @@ async function updateLike(targetKey) {
     fetchCount(targetKey);
 }
 
-// 데이터 가져오기
-window.addEventListener('DOMContentLoaded', () => {
+// 데이터 가져오기 및 이벤트
+$(document).ready(function () {
     fetchCount(targetId);
 
     // 좋아요 버튼 이벤트
-    document.getElementById("LIKEBTN").addEventListener("click", () => {
+    $("#LIKEBTN").on("click", function () {
         updateLike(targetId);
     });
 });
