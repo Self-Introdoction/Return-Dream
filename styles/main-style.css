@@ -72,3 +72,22 @@ a {
   gap: 20px;
   padding: 40px 20px;
 }
+
+.comments-section {
+    width: auto;
+    height: 700px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    margin: 50px 50px 50px 50px;
+};
+
+.commentlist {
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+}
