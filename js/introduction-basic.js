@@ -1,27 +1,9 @@
 // Firebase SDK 라이브러리 가져오기                    
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { db } from "../js/firebase-config.js"; 
 import {
-    getFirestore, collection, addDoc, doc,
+    collection, addDoc, doc,
     getDoc, setDoc, getDocs
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-
-
-// Firebase 구성 정보 설정
-const firebaseConfig = {
-    apiKey: "AIzaSyCogZ9QQDUBiskM0XSxwnc-kM-APeuPXzw",
-    authDomain: "sparta-a50a6.firebaseapp.com",
-    projectId: "sparta-a50a6",
-    storageBucket: "sparta-a50a6.firebasestorage.app",
-    messagingSenderId: "758408498632",
-    appId: "1:758408498632:web:960a145106631c5bd204fd",
-    measurementId: "G-MXJ6K46T54"
-};
-
-
-// Firebase 인스턴스 초기화
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
 
 //페이지의 DOM 요소들이 모두 준비되었을 때 안의 코드를 실행
@@ -29,10 +11,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     //팔로워 수 처리
     const followers_value = document.getElementById("followers");
     const btn = document.getElementById("following");
-    const followerDocRef = doc(db, "followers", "followers_count"); //Firebase의 followers 컬렉션 안의 "followers_count" 문서를 가리킨다
+    const followerDocRef = doc(db, "miniprojects", "followers_count"); //Firebase의 miniprojects 컬렉션 안의 "followers_count" 문서를 가리킨다
 
     let followerCount = 500;//팔로워 수 초기값
-    //firebase에서 현재 팔로워 수를 불러와서 followerCount 저장하고 웹 화면에도 표시
+    //firebase에서 현재 팔로워 수를 불러와서 currentCount에 저장하고 웹 화면에도 표시
     const followerSnap = await getDoc(followerDocRef);
 
     if (followerSnap.exists()) {
@@ -112,55 +94,3 @@ $("#postingbtn").click(async function () {
 $("#savebtn").click(() => {
     $('#postingbox').toggle();
 });
-
-
-
-//메이페이지에서 사진 클릭했을시 각각의 상세페이지로
-
-  // const params = new URLSearchParams(window.location.search); // ?member=김동현 같은 쿼리스트링을 URLSearchParams가 꺼내줌
-  // const member = decodeURIComponent(params.get("member")); // 이름이 %EA%B9%으로 된걸 한글 인코딩 처리
-
-  // const members = {
-  //   "김동현": {
-  //     membername: "김 동 현",
-  //     intro: "안녕하세요 개발자를 꿈꾸는 김동현입니다.",
-  //     profileImg: "../images/caicedo.jpg",
-  //     git_adress: "https://github.com/hanjsnote"
-  //   },
-  //   "원세영": {
-  //     membername: "원 세 영",
-  //     intro: "안녕하세요 개발자를 꿈꾸는 원세영입니다.",
-  //     profileImg: "../images/captain.webp",
-  //     git_adress: "https://github.com/hanjsnote"
-  //   },
-  //   "김영훈": {
-  //     membername: "김 영 훈",
-  //     intro: "안녕하세요 개발자를 꿈꾸는 김영훈입니다.",
-  //     profileImg: "../images/cucurella.avif",
-  //     git_adress: "https://github.com/hanjsnote"
-  //   },
-  //   "정서영": {
-  //     membername: "정 서 영",
-  //     intro: "안녕하세요 개발자를 꿈꾸는 정서영입니다.",
-  //     profileImg: "../images/enzo.jpeg",
-  //     git_adress: "https://github.com/hanjsnote"
-  //   },
-  //   "한정식": {
-  //     membername: "한 정 식",
-  //     intro: "안녕하세요 개발자를 꿈꾸는 한정식입니다.",
-  //     profileImg: "../images/neto.webp",
-  //     git_adress: "https://www.naver.com"
-  //   }
-  // };
-
-  // // members에 있는 데이터로 introduction-basic의 HTML 요소를 동적으로 채움
-  // const data = members[member];
-  // if (data) {
-  //   console.log("멤버 데이터 불러옴:", data);
-  //   document.querySelector(".username").textContent = data.membername;
-  //   document.querySelector(".self_introduction").textContent = data.intro;
-  //   document.querySelector(".profile-image").src = data.profileImg;
-  //   document.querySelector(".git-button").href = data.git_adress;
-  // } else {
-  //   console.warn("해당 멤버를 찾을 수 없습니다:", member);
-  // }
