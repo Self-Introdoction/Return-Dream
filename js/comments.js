@@ -1,10 +1,13 @@
 // Firebase SDK 라이브러리 가져오기
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { db } from "../js/firebase-config.js"; 
+
 import {
-    getFirestore,
     collection,
     doc,
     addDoc,
+    getDoc,
+    updateDoc,
+    increment,
     query,
     where,
     orderBy,
@@ -12,37 +15,6 @@ import {
     setDoc,
     serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-
-// Firebase 구성 정보 설정
-const firebaseConfig = {
-    apiKey: "AIzaSyDkSPoHu7URW0Ipcsq8glFhF_KwezH-75M",
-    authDomain: "sparta-1b688.firebaseapp.com",
-    projectId: "sparta-1b688",
-    storageBucket: "sparta-1b688.firebasestorage.app",
-    messagingSenderId: "318584876979",
-    appId: "1:318584876979:web:5a423ccefcc6cf3891e5c6",
-    measurementId: "G-YSCBS9BEGL"
-};
-
-
-// Firebase 인스턴스 초기화
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-
-
-// 파라미터 가져오기
-// 현재는 임시로 파라미터로 처리
-// 추후 개인 게시물의 키값으로 변경예정
-function getQueryParam(key) {
-    const params = new URLSearchParams(window.location.search);
-    return params.get(key);
-}
-
-const key = getQueryParam('key');
-const targetId = key || "main";
-const target = targetId === "main" ? "main" : "posts";
 
 
 
@@ -60,7 +32,8 @@ const target = targetId === "main" ? "main" : "posts";
  * - `setDoc(경로, 객체)`: 참조하는 문서에 데이터를 저장
  *                       해당 경로에 문서가 없으면 새로 생성하고, 있으면 덮어쓰기
  */
-export async function registerComment(commentText) {
+export async function registerComment(targetId, commentText) {
+    const target = targetId === "main" ? "main" : "posts";
     const newDocRef = doc(collection(db, "comments", target, `${target}-comments`)); // 자동 ID 생성
     const newId = newDocRef.id; // 생성된 문서 ID
 
@@ -76,7 +49,8 @@ export async function registerComment(commentText) {
 
 
 // 댓글 가져오기
-export async function loadComments(callback) {
+export async function loadComments(targetId, callback) {
+    const target = targetId === "main" ? "main" : "posts";
     const conditions = [];
 
     // orderBy 추가
@@ -106,4 +80,39 @@ $('#commentInput').keypress(function (e) {
         e.preventDefault();
         $('#commentButton').click();
     }
+});
+
+// 좋아요 수 불러오기
+export async function fetchCount(commentTarget, commentId) {
+    const commentDocRef = doc(db, "comments", commentTarget, `${commentTarget}-comments`, commentId);
+    const docSnap = await getDoc(commentDocRef);
+
+    if (!docSnap.exists()) {
+        console.log("No such comment!");
+        $(`#commentList li[data-id='${commentId}']`).find('.count').text(0);
+        $(`#commentList li[data-id='${commentId}']`).find('.heart').text("♡");
+        return;
+    }
+
+    const count = docSnap.data().like ?? 0;
+    $(`#commentList li[data-id='${commentId}']`).find('.count').text(count);
+    $(`#commentList li[data-id='${commentId}']`).find('.heart').text(count >= 1 ? "❤" : "♡");
+}
+
+// 버튼 클릭시 좋아요 증가
+export async function updateLike(commentTarget, commentId) {
+    const commentDocRef = doc(db, "comments", commentTarget, `${commentTarget}-comments`, commentId);
+    await updateDoc(commentDocRef, {
+        like: increment(1)
+    });
+    fetchCount(commentTarget, commentId);
+}
+
+// 이벤트
+$(document).on("click", ".commentLikeBtn", async function () {
+    const $this = $(this);
+    const commentId = $this.closest('li').data("id");
+    const commentTarget = $this.closest('li').data("target");
+
+    await updateLike(commentTarget, commentId);
 });
